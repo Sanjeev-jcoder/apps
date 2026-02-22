@@ -258,7 +258,7 @@ function simulateOTP(phone) {
     document.getElementById('display-phone').innerText = `+91 ${phone}`;
     document.getElementById('phone-section').style.display = 'none';
     document.getElementById('otp-section').style.display = 'block';
-    setTimeout(() => alert("Your Test OTP is: 1234"), 1000);
+    setTimeout(() => alert("Your Test OTP is: 123456"), 1000);
     startTimer();
 }
 
@@ -269,7 +269,7 @@ function verifyOTP() {
 
     // Fallback for Test Mode
     if (firebaseConfig.apiKey === "YOUR_API_KEY") {
-        if (otp === "1234") {
+        if (otp === "123456") {
             checkPINStatus();
         } else {
             alert("Invalid Code!");
