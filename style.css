@@ -83,82 +83,66 @@ body {
 }
 
 .auth-card,
+/* Google Login UI */
 #login-container {
     width: 100%;
-    background: rgba(255, 255, 255, 0.85) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
     backdrop-filter: blur(30px);
-    padding: 40px 24px;
+    padding: 60px 24px 40px;
     border-radius: 32px 32px 0 0;
     border: 1px solid rgba(255, 255, 255, 0.8);
     box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.1);
     color: #1e293b !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-#login-container h2,
-#login-container h3,
-#login-container p,
-#login-container span {
+#login-container h1,
+#login-container p {
     color: #1e293b !important;
 }
 
-#login-container p {
-    opacity: 0.7;
+.google-btn {
+    width: 100%;
+    max-width: 300px;
+    height: 54px;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #3c4043;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    margin: 10px 0;
 }
 
-.code-input,
+.google-btn:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+    border-color: #d2d4d7;
+}
+
+.google-btn img {
+    width: 22px;
+    height: 22px;
+}
+
+/* Cleanup old auth styles */
+#phone-input,
+.otp-inputs,
+.pin-inputs,
 .otp-input,
 .pin-input {
-    width: 50px !important;
-    height: 60px !important;
-    flex: 0 0 50px !important;
-    text-align: center;
-    border-radius: 14px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    background: #ffffff;
-    color: var(--primary) !important;
-    font-size: 1.6rem;
-    font-weight: 800;
-    outline: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    display: none !important;
 }
 
-.code-input:focus,
-.otp-input:focus,
-.pin-input:focus {
-    border-color: var(--primary);
-    background: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(96, 165, 250, 0.15);
-}
-
-.otp-inputs,
-.pin-inputs {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    margin-bottom: 25px;
-}
-
-#phone-input {
-    width: 100%;
-    padding: 16px 16px 16px 60px;
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 16px;
-    color: #1e293b;
-    font-size: 1.2rem;
-    font-weight: 700;
-    outline: none;
-    transition: all 0.3s;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-#phone-input:focus {
-    border-color: var(--primary);
-    background: #ffffff;
-    box-shadow: 0 0 15px rgba(96, 165, 250, 0.1);
-}
 
 /* Splash Screen Updates */
 #splash-screen {

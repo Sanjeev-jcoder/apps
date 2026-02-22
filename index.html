@@ -38,66 +38,18 @@
         <!-- Auth / Login View -->
         <div id="auth-overlay">
             <div id="login-container">
-                <div id="phone-section">
-                    <h2 style="font-weight: 800; margin-bottom: 8px;">Welcome
-                    </h2>
-                    <p style="margin-bottom: 30px;">Enter your phone to continue</p>
-                    <div style="position: relative; margin-bottom: 25px;">
-                        <span
-                            style="position: absolute; left: 18px; top: 18px; font-weight: 700; z-index: 10;">+91</span>
-                        <input type="tel" id="phone-input" placeholder="000 000 0000" maxlength="10">
-                    </div>
-                    <button class="btn-primary" style="width: 100%;" onclick="sendOTP()">SEND OTP</button>
-                    <div id="recaptcha-container" style="margin-top: 20px;"></div>
-                </div>
+                <div id="google-login-section" style="text-align: center;">
+                    <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; color: var(--text-main);">
+                        Welcome</h1>
+                    <p style="margin-bottom: 40px; color: var(--text-muted);">Create stunning statuses in seconds.</p>
 
-                <div id="otp-section" style="display: none;">
-                    <h2 style="font-weight: 800; margin-bottom: 8px;">Verify
-                        Phone</h2>
-                    <p style="margin-bottom: 30px;">Code sent to <span id="display-phone"
-                            style="color: var(--primary); font-weight: 800;"></span></p>
-                    <div class="otp-inputs">
-                        <input type="tel" class="otp-input" maxlength="1" autofocus>
-                        <input type="tel" class="otp-input" maxlength="1">
-                        <input type="tel" class="otp-input" maxlength="1">
-                        <input type="tel" class="otp-input" maxlength="1">
-                        <input type="tel" class="otp-input" maxlength="1">
-                        <input type="tel" class="otp-input" maxlength="1">
-                    </div>
-                    <button class="btn-primary" style="width: 100%;" onclick="verifyOTP()">VERIFY & LOGIN</button>
-                    <p style="text-align: center; margin-top: 20px; font-size: 0.9rem;">
-                        Didn't receive? <span style="color: var(--primary); font-weight: 600; cursor: pointer;"
-                            onclick="resendOTP()">Resend</span><span id="timer"></span>
-                    </p>
-                </div>
+                    <button class="google-btn" onclick="loginWithGoogle()">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon">
+                        <span>Continue with Google</span>
+                    </button>
 
-                <div id="set-pin-section" style="display: none;">
-                    <h2 style="font-weight: 800; margin-bottom: 8px;">Set
-                        Login PIN</h2>
-                    <p style="margin-bottom: 30px;">Create a 4-digit PIN for security</p>
-                    <div class="pin-inputs">
-                        <input type="tel" class="pin-input set-pin" maxlength="1">
-                        <input type="tel" class="pin-input set-pin" maxlength="1">
-                        <input type="tel" class="pin-input set-pin" maxlength="1">
-                        <input type="tel" class="pin-input set-pin" maxlength="1">
-                    </div>
-                    <button class="btn-primary" style="width: 100%;" onclick="savePIN()">CONFIRM PIN</button>
-                </div>
-
-                <div id="login-pin-section" style="display: none;">
-                    <h2 style="font-weight: 800; margin-bottom: 8px;">Enter
-                        PIN</h2>
-                    <p style="margin-bottom: 30px;">Welcome back! Enter your PIN</p>
-                    <div class="pin-inputs">
-                        <input type="tel" class="pin-input login-pin" maxlength="1">
-                        <input type="tel" class="pin-input login-pin" maxlength="1">
-                        <input type="tel" class="pin-input login-pin" maxlength="1">
-                        <input type="tel" class="pin-input login-pin" maxlength="1">
-                    </div>
-                    <button class="btn-primary" style="width: 100%;" onclick="verifyPIN()">LOGIN</button>
-                    <p style="text-align: center; margin-top: 20px; font-size: 0.9rem;">
-                        Forgot PIN? <span style="color: var(--primary); font-weight: 800; cursor: pointer;"
-                            onclick="switchOTP()">Use OTP</span>
+                    <p style="margin-top: 30px; font-size: 0.75rem; color: var(--text-muted); padding: 0 20px;">
+                        By continuing, you agree to our Terms of Service and Privacy Policy.
                     </p>
                 </div>
             </div>

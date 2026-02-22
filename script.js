@@ -163,181 +163,97 @@ window.onload = () => {
             }
         }
 
-        // Persistence Check
-        if (localStorage.getItem('user_logged')) {
-            isLogged = true;
-            const authOverlay = document.getElementById('auth-overlay');
-            if (authOverlay) authOverlay.style.display = 'none';
+        // setupAutoTab('.otp-input'); // No longer needed
+        // setupAutoTab('.pin-input'); // No longer needed
 
-            const savedPhone = localStorage.getItem('user_phone');
-            const profilePhone = document.getElementById('profile-phone-display');
-            if (savedPhone && profilePhone) profilePhone.innerText = savedPhone;
-
-            const savedPic = localStorage.getItem('user_profile_pic');
-            if (savedPic) {
-                const img = new Image();
-                if (savedPic.startsWith('http')) img.crossOrigin = "anonymous";
-                img.src = savedPic;
-                img.onload = () => {
-                    userProfilePic = img;
-                    document.getElementById('profile-img-preview').src = savedPic;
-                    document.getElementById('profile-img-preview').style.display = 'block';
-                    document.getElementById('profile-icon-placeholder').style.display = 'none';
-                    // Sync to header avatar
-                    const headerImg = document.getElementById('header-profile-img');
-                    const headerIcon = document.getElementById('header-profile-icon');
-                    if (headerImg) { headerImg.src = savedPic; headerImg.style.display = 'block'; }
-                    if (headerIcon) headerIcon.style.display = 'none';
-                };
+        // Auth State Listener for Google Auth
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                console.log("Persistent user found:", user.email);
+                loginSuccess(user);
+            } else {
+                console.log("No user logged in, showing auth overlay");
+                document.getElementById('auth-overlay').style.display = 'flex';
+                document.getElementById('auth-overlay').style.opacity = '1';
             }
-        } else if (localStorage.getItem('user_pin')) {
-            const phoneSec = document.getElementById('phone-section');
-            const pinSec = document.getElementById('login-pin-section');
-            if (phoneSec) phoneSec.style.display = 'none';
-            if (pinSec) pinSec.style.display = 'block';
-        }
-
-        setupAutoTab('.otp-input');
-        setupAutoTab('.pin-input');
+        });
 
     } catch (e) {
         console.error("Initialization Error:", e);
     }
 };
 
-function setupAutoTab(selector) {
-    const inputs = document.querySelectorAll(selector);
-    inputs.forEach((input, index) => {
-        input.addEventListener('input', (e) => {
-            if (e.target.value.length === 1 && index < inputs.length - 1) {
-                inputs[index + 1].focus();
-            }
-        });
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
-                inputs[index - 1].focus();
-            }
-        });
-    });
-}
-
-function setupOTPInputs() {
-    // Deprecated in favor of setupAutoTab
-}
-
-function sendOTP() {
-    const phone = document.getElementById('phone-input').value;
-    if (phone.length === 10) {
-        const phoneNumber = "+91" + phone;
-        const appVerifier = window.recaptchaVerifier;
-
-        // Fallback to simulation if keys are missing
-        if (firebaseConfig.apiKey === "YOUR_API_KEY") {
-            alert("⚠️ TEST MODE: Firebase not configured. Using simulate OTP 1234");
-            simulateOTP(phone);
-            return;
-        }
-
-        firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
-            .then((confirmationResult) => {
-                window.confirmationResult = confirmationResult;
-                document.getElementById('display-phone').innerText = phoneNumber;
-                document.getElementById('phone-section').style.display = 'none';
-                document.getElementById('otp-section').style.display = 'block';
-                startTimer();
-            }).catch((error) => {
-                console.error("SMS Start Error:", error);
-                alert("Error sending SMS: " + error.message);
-            });
-    } else {
-        alert("Please enter a valid 10-digit phone number");
+async function loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try {
+        const result = await firebase.auth().signInWithPopup(provider);
+        console.log("Login successful:", result.user.displayName);
+        // State change listener will handle the UI update
+    } catch (error) {
+        console.error("Google Login Error:", error);
+        if (error.code === 'auth/popup-closed-by-user') return;
+        alert("Login failed: " + error.message);
     }
 }
 
-function simulateOTP(phone) {
-    document.getElementById('display-phone').innerText = `+91 ${phone}`;
-    document.getElementById('phone-section').style.display = 'none';
-    document.getElementById('otp-section').style.display = 'block';
-    setTimeout(() => alert("Your Test OTP is: 123456"), 1000);
-    startTimer();
-}
-
-function verifyOTP() {
-    const inputs = document.querySelectorAll('.otp-input');
-    let otp = "";
-    inputs.forEach(input => otp += input.value);
-
-    // Fallback for Test Mode
-    if (firebaseConfig.apiKey === "YOUR_API_KEY") {
-        if (otp === "123456") {
-            checkPINStatus();
-        } else {
-            alert("Invalid Code!");
-        }
-        return;
-    }
-
-    window.confirmationResult.confirm(otp)
-        .then((result) => {
-            checkPINStatus();
-        }).catch((error) => {
-            alert("Invalid OTP code. Please try again.");
-        });
-}
-
-function checkPINStatus() {
-    if (localStorage.getItem('user_pin')) {
-        loginSuccess();
-    } else {
-        document.getElementById('otp-section').style.display = 'none';
-        document.getElementById('set-pin-section').style.display = 'block';
-    }
-}
-
-function savePIN() {
-    const inputs = document.querySelectorAll('.pin-input.set-pin');
-    let pin = "";
-    inputs.forEach(input => pin += input.value);
-
-    if (pin.length === 4) {
-        localStorage.setItem('user_pin', pin);
-        loginSuccess();
-    } else {
-        alert("Please enter a 4-digit PIN");
-    }
-}
-
-function verifyPIN() {
-    const inputs = document.querySelectorAll('.pin-input.login-pin');
-    let inputPin = "";
-    inputs.forEach(input => inputPin += input.value);
-
-    const savedPin = localStorage.getItem('user_pin');
-    if (inputPin === savedPin) {
-        loginSuccess();
-    } else {
-        alert("Incorrect PIN! Try again.");
-    }
-}
-
-function switchOTP() {
-    document.getElementById('login-pin-section').style.display = 'none';
-    document.getElementById('phone-section').style.display = 'block';
-}
-
-function loginSuccess() {
-    const phone = document.getElementById('phone-input').value;
-    const fullPhone = "+91 " + phone;
-    localStorage.setItem('user_logged', 'true');
-    localStorage.setItem('user_phone', fullPhone);
+function loginSuccess(user) {
     isLogged = true;
+    const name = user.displayName || "User";
+    const email = user.email || "";
+    const photoUrl = user.photoURL || "";
 
-    document.getElementById('profile-phone-display').innerText = fullPhone;
-    document.getElementById('auth-overlay').style.opacity = '0';
-    setTimeout(() => {
-        document.getElementById('auth-overlay').style.display = 'none';
-        renderTemplates();
-    }, 500);
+    // Store for legacy logic if needed
+    localStorage.setItem('user_logged', 'true');
+    localStorage.setItem('user_email', email);
+    localStorage.setItem('user_phone', email); // Hack to keep subscription logic working which uses 'user_phone'
+
+    // Update Profile UI
+    const profilePhone = document.getElementById('profile-phone-display');
+    if (profilePhone) profilePhone.innerText = name;
+
+    const profileSubtitle = document.querySelector('.profile-subtitle');
+    if (profileSubtitle) profileSubtitle.innerText = email;
+
+    // Load and Sync Profile Picture
+    if (photoUrl) {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = photoUrl;
+        img.onload = () => {
+            userProfilePic = img;
+            const preview = document.getElementById('profile-img-preview');
+            const placeholder = document.getElementById('profile-icon-placeholder');
+            if (preview) { preview.src = photoUrl; preview.style.display = 'block'; }
+            if (placeholder) placeholder.style.display = 'none';
+
+            const headerImg = document.getElementById('header-profile-img');
+            const headerIcon = document.getElementById('header-profile-icon');
+            if (headerImg) { headerImg.src = photoUrl; headerImg.style.display = 'block'; }
+            if (headerIcon) headerIcon.style.display = 'none';
+
+            drawCanvas(); // Update canvas if open
+        };
+    }
+
+    // Hide Auth Overlay
+    const authOverlay = document.getElementById('auth-overlay');
+    if (authOverlay) {
+        authOverlay.style.opacity = '0';
+        setTimeout(() => {
+            authOverlay.style.display = 'none';
+            renderTemplates();
+            checkSubscriptionStatus();
+        }, 500);
+    }
+}
+
+function handleLogout() {
+    if (confirm("Are you sure you want to logout?")) {
+        firebase.auth().signOut().then(() => {
+            localStorage.clear();
+            location.reload();
+        });
+    }
 }
 
 function switchView(viewId, el) {
